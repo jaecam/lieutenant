@@ -14,13 +14,6 @@ pub enum RegisterError {
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 pub struct NodeKey(usize);
 
-impl std::ops::Deref for NodeKey {
-    type Target = usize;
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
 /// Data structure used to dispatch commands.
 pub struct CommandDispatcher<C: Context> {
     // This structure acts as the root node.
@@ -64,16 +57,16 @@ where
 
         'argument: while let Some(argument) = arguments.peek() {
             let children = match node_key {
-                Some(key) => &self.nodes[*key].children,
+                Some(key) => &self.nodes[key.0].children,
                 None => &self.children,
             };
 
-            for child_key in children {
-                let child = &self.nodes[**child_key];
+            for &child_key in children {
+                let child = &self.nodes[child_key.0];
 
                 if argument == &&child.argument {
                     arguments.next();
-                    node_key = Some(*child_key);
+                    node_key = Some(child_key);
                     continue 'argument;
                 }
             }
@@ -85,7 +78,7 @@ where
             let child_key = NodeKey(self.nodes.insert(child));
 
             if let Some(node_key) = node_key {
-                let node = &mut self.nodes[*node_key];
+                let node = &mut self.nodes[node_key.0];
                 node.children.push(child_key);
             } else {
                 self.children.push(child_key);
@@ -95,7 +88,7 @@ where
         }
 
         if let Some(key) = node_key {
-            let node = &mut self.nodes[*key];
+            let node = &mut self.nodes[key.0];
             node.execs.push(spec.exec);
         } else {
             // Command with zero arguments?
@@ -126,11 +119,11 @@ where
         let mut errors = Vec::new();
 
         for child_key in &self.children {
-            nodes.push((Input::new(command), *child_key));
+            nodes.push((Input::new(command), child_key.0));
         }
 
         while let Some((mut input, node_key)) = nodes.pop() {
-            let node = &self.nodes[*node_key];
+            let node = &self.nodes[node_key];
             let satisfies = match &node.argument {
                 Argument::Literal { values } => {
                     let parsed = input.advance_until(" ");
@@ -151,7 +144,7 @@ where
 
             if satisfies {
                 for child_key in &node.children {
-                    nodes.push((input, *child_key));
+                    nodes.push((input, child_key.0));
                 }
             }
         }
