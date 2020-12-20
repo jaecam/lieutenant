@@ -157,7 +157,7 @@ where
 }
 
 /// Node on the command graph.
-struct Node<C: Context> {
+pub struct Node<C: Context> {
     children: SmallVec<[NodeKey; 4]>,
     argument: Argument<C>,
     execs: Vec<Exec<C>>,
