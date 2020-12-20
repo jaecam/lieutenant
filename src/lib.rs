@@ -1,5 +1,5 @@
 mod command;
-mod dispatcher;
+pub mod dispatcher;
 mod parser;
 mod provider;
 
