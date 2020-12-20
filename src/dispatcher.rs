@@ -25,11 +25,11 @@ impl std::ops::Deref for NodeKey {
 pub struct CommandDispatcher<C: Context> {
     // This structure acts as the root node.
     /// Stores all nodes in the command graph.
-    nodes: Slab<Node<C>>,
+    pub nodes: Slab<Node<C>>,
     /// Children of the root node.
-    children: SmallVec<[NodeKey; 4]>,
+    pub children: SmallVec<[NodeKey; 4]>,
     /// Vector of all commands registered to this dispatcher.
-    commands: Vec<CommandSpec<C>>,
+    pub commands: Vec<CommandSpec<C>>,
 }
 
 impl<C: Context> Default for CommandDispatcher<C> {
