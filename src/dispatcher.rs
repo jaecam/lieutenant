@@ -12,7 +12,7 @@ pub enum RegisterError {
 }
 
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
-pub struct NodeKey(usize);
+pub struct NodeKey(pub usize);
 
 /// Data structure used to dispatch commands.
 pub struct CommandDispatcher<C: Context> {
@@ -158,9 +158,9 @@ where
 
 /// Node on the command graph.
 pub struct Node<C: Context> {
-    children: SmallVec<[NodeKey; 4]>,
-    argument: Argument<C>,
-    execs: Vec<Exec<C>>,
+    pub children: SmallVec<[NodeKey; 4]>,
+    pub argument: Argument<C>,
+    pub execs: Vec<Exec<C>>,
 }
 
 impl<C: Context> From<Argument<C>> for Node<C> {
